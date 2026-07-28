@@ -1,0 +1,147 @@
+{
+  "run_name": "smoke_gemma_inject",
+  "phase": "injection",
+  "model": "gemma-4-e2b",
+  "hf_id": "google/gemma-4-E2B-it",
+  "thinking_mode": true,
+  "baseline": "results/smoke_gemma_base/rollouts.jsonl",
+  "sources": [
+    "self_wrong",
+    "irrelevant",
+    "corrupted",
+    "wrong_conclusion"
+  ],
+  "fractions": [
+    0.5,
+    1.0
+  ],
+  "n_samples": 4,
+  "max_new_tokens": 8192,
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 64,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "corrupted:prefix0.5": {
+      "n_questions": 4,
+      "pass@1": 0.6875,
+      "pass@2": 0.9583333333333334,
+      "pass@4": 1.0,
+      "n_samples": 16,
+      "accuracy": 0.6875,
+      "adoption_rate": 0.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 2411.625,
+      "max_gen_tokens": 5162
+    },
+    "irrelevant:full_closed": {
+      "n_questions": 4,
+      "pass@1": 0.25,
+      "pass@2": 0.25,
+      "pass@4": 0.25,
+      "n_samples": 16,
+      "accuracy": 0.25,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 8.0,
+      "max_gen_tokens": 8
+    },
+    "irrelevant:prefix0.5": {
+      "n_questions": 4,
+      "pass@1": 0.25,
+      "pass@2": 0.25,
+      "pass@4": 0.25,
+      "n_samples": 16,
+      "accuracy": 0.25,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 2125.625,
+      "max_gen_tokens": 5221
+    },
+    "irrelevant:prefix1": {
+      "n_questions": 4,
+      "pass@1": 0.25,
+      "pass@2": 0.25,
+      "pass@4": 0.25,
+      "n_samples": 16,
+      "accuracy": 0.25,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 12.0625,
+      "max_gen_tokens": 58
+    },
+    "self_wrong:full_closed": {
+      "n_questions": 3,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "n_samples": 12,
+      "accuracy": 0.0,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 8.666666666666666,
+      "max_gen_tokens": 9
+    },
+    "self_wrong:prefix0.5": {
+      "n_questions": 3,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "n_samples": 12,
+      "accuracy": 0.0,
+      "adoption_rate": 0.8333333333333334,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 2228.3333333333335,
+      "max_gen_tokens": 3426
+    },
+    "self_wrong:prefix1": {
+      "n_questions": 3,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "n_samples": 12,
+      "accuracy": 0.0,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 9.666666666666666,
+      "max_gen_tokens": 10
+    },
+    "wrong_conclusion:full_closed": {
+      "n_questions": 4,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "n_samples": 16,
+      "accuracy": 0.0,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 8.0,
+      "max_gen_tokens": 8
+    },
+    "wrong_conclusion:prefix1": {
+      "n_questions": 4,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "n_samples": 16,
+      "accuracy": 0.0,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 9.0,
+      "max_gen_tokens": 9
+    }
+  }
+}

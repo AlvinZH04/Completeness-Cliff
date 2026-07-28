@@ -1,0 +1,33 @@
+{
+  "run_name": "smoke_hopper_base",
+  "phase": "baseline",
+  "model": "qwen3-4b-thinking",
+  "hf_id": "Qwen/Qwen3-4B-Thinking-2507",
+  "thinking_mode": true,
+  "dataset": "rg_maze",
+  "n_questions": 4,
+  "n_samples": 4,
+  "max_new_tokens": 8192,
+  "sampling": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "metrics": {
+    "n_questions": 4,
+    "pass@1": 0.1875,
+    "pass@2": 0.33333333333333337,
+    "pass@4": 0.5,
+    "n_samples": 16,
+    "accuracy": 0.1875,
+    "adoption_rate": 0.0,
+    "no_answer_rate": 0.8125,
+    "truncation_rate": 0.8125,
+    "mean_gen_tokens": 7831.0,
+    "max_gen_tokens": 8192
+  },
+  "wrong_trace_coverage": 0.0
+}

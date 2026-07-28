@@ -1,0 +1,21 @@
+# Raw rollout dumps: too large for GitHub (up to ~750 MB; 100 MB hard limit).
+# Regenerable from run_baseline.py / run_injection.py; distilled bank lives in traces/.
+results/**/rollouts.jsonl
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Env / tooling
+.claude/
+.DS_Store
+*.swp
+
+# Local venvs / caches (should not exist here, but guard anyway)
+.venv/
+env/
+huggingface/
+wandb/

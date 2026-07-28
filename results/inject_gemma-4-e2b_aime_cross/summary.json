@@ -1,0 +1,72 @@
+{
+  "run_name": "inject_gemma-4-e2b_aime_cross",
+  "phase": "injection",
+  "model": "gemma-4-e2b",
+  "hf_id": "google/gemma-4-E2B-it",
+  "thinking_mode": true,
+  "baseline": "results/base_gemma-4-e2b_aime24_25/rollouts.jsonl",
+  "sources": [
+    "irrelevant_cross"
+  ],
+  "fractions": [
+    0.25,
+    1.0
+  ],
+  "n_samples": 16,
+  "max_new_tokens": 32768,
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 64,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "irrelevant_cross:full_closed": {
+      "n_questions": 60,
+      "pass@1": 0.08645833333333333,
+      "pass@2": 0.12916666666666668,
+      "pass@4": 0.1765018315018315,
+      "pass@8": 0.22558663558663558,
+      "pass@16": 0.26666666666666666,
+      "n_samples": 960,
+      "accuracy": 0.08645833333333333,
+      "adoption_rate": 0.4083333333333333,
+      "no_answer_rate": 0.17916666666666667,
+      "truncation_rate": 0.06666666666666667,
+      "mean_gen_tokens": 1858.909375,
+      "max_gen_tokens": 4096
+    },
+    "irrelevant_cross:prefix0.25": {
+      "n_questions": 60,
+      "pass@1": 0.265625,
+      "pass@2": 0.3380555555555555,
+      "pass@4": 0.3967307692307692,
+      "pass@8": 0.4562691012691012,
+      "pass@16": 0.5166666666666667,
+      "n_samples": 960,
+      "accuracy": 0.265625,
+      "adoption_rate": 0.07916666666666666,
+      "no_answer_rate": 0.07291666666666667,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 6817.432291666667,
+      "max_gen_tokens": 16407
+    },
+    "irrelevant_cross:prefix1": {
+      "n_questions": 60,
+      "pass@1": 0.259375,
+      "pass@2": 0.3326388888888889,
+      "pass@4": 0.40292124542124536,
+      "pass@8": 0.47787878787878785,
+      "pass@16": 0.55,
+      "n_samples": 960,
+      "accuracy": 0.259375,
+      "adoption_rate": 0.17395833333333333,
+      "no_answer_rate": 0.07083333333333333,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 4267.288541666667,
+      "max_gen_tokens": 12774
+    }
+  }
+}

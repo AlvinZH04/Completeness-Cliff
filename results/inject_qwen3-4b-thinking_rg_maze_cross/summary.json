@@ -1,0 +1,72 @@
+{
+  "run_name": "inject_qwen3-4b-thinking_rg_maze_cross",
+  "phase": "injection",
+  "model": "qwen3-4b-thinking",
+  "hf_id": "Qwen/Qwen3-4B-Thinking-2507",
+  "thinking_mode": true,
+  "baseline": "results/base_qwen3-4b-thinking_rg_maze/rollouts.jsonl",
+  "sources": [
+    "irrelevant_cross"
+  ],
+  "fractions": [
+    0.25,
+    1.0
+  ],
+  "n_samples": 16,
+  "max_new_tokens": 32768,
+  "sampling": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "irrelevant_cross:full_closed": {
+      "n_questions": 50,
+      "pass@1": 0.02875,
+      "pass@2": 0.05433333333333334,
+      "pass@4": 0.09765934065934065,
+      "pass@8": 0.16174358974358974,
+      "pass@16": 0.24,
+      "n_samples": 800,
+      "accuracy": 0.02875,
+      "adoption_rate": 0.7775,
+      "no_answer_rate": 0.005,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 296.735,
+      "max_gen_tokens": 1969
+    },
+    "irrelevant_cross:prefix0.25": {
+      "n_questions": 50,
+      "pass@1": 0.9225,
+      "pass@2": 0.9655,
+      "pass@4": 0.9781538461538462,
+      "pass@8": 0.9799860139860139,
+      "pass@16": 0.98,
+      "n_samples": 800,
+      "accuracy": 0.9225,
+      "adoption_rate": 0.0125,
+      "no_answer_rate": 0.0025,
+      "truncation_rate": 0.0025,
+      "mean_gen_tokens": 13652.17,
+      "max_gen_tokens": 32768
+    },
+    "irrelevant_cross:prefix1": {
+      "n_questions": 50,
+      "pass@1": 0.7825,
+      "pass@2": 0.8531666666666666,
+      "pass@4": 0.9026153846153845,
+      "pass@8": 0.9377544677544676,
+      "pass@16": 0.96,
+      "n_samples": 800,
+      "accuracy": 0.7825,
+      "adoption_rate": 0.12875,
+      "no_answer_rate": 0.00625,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 7318.495,
+      "max_gen_tokens": 30210
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "run_name": "base_gemma-4-e2b_rg_maze",
+  "phase": "baseline",
+  "model": "gemma-4-e2b",
+  "hf_id": "google/gemma-4-E2B-it",
+  "thinking_mode": true,
+  "dataset": "rg_maze",
+  "n_questions": 50,
+  "n_samples": 16,
+  "max_new_tokens": 32768,
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 64,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "metrics": {
+    "n_questions": 50,
+    "pass@1": 0.66125,
+    "pass@2": 0.795666666666667,
+    "pass@4": 0.8837692307692308,
+    "pass@8": 0.9393473193473192,
+    "pass@16": 0.96,
+    "n_samples": 800,
+    "accuracy": 0.66125,
+    "adoption_rate": 0.0,
+    "no_answer_rate": 0.0,
+    "truncation_rate": 0.0,
+    "mean_gen_tokens": 3863.835,
+    "max_gen_tokens": 9298
+  },
+  "wrong_trace_coverage": 0.84
+}

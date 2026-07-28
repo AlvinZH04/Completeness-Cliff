@@ -1,0 +1,33 @@
+{
+  "run_name": "smoke_gemma_base",
+  "phase": "baseline",
+  "model": "gemma-4-e2b",
+  "hf_id": "google/gemma-4-E2B-it",
+  "thinking_mode": true,
+  "dataset": "rg_maze",
+  "n_questions": 4,
+  "n_samples": 4,
+  "max_new_tokens": 8192,
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 64,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "metrics": {
+    "n_questions": 4,
+    "pass@1": 0.75,
+    "pass@2": 0.9583333333333334,
+    "pass@4": 1.0,
+    "n_samples": 16,
+    "accuracy": 0.75,
+    "adoption_rate": 0.0,
+    "no_answer_rate": 0.0,
+    "truncation_rate": 0.0,
+    "mean_gen_tokens": 3896.75,
+    "max_gen_tokens": 6321
+  },
+  "wrong_trace_coverage": 0.75
+}

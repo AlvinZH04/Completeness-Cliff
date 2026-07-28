@@ -1,0 +1,67 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  cpu-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # The CPU suite needs very little: vLLM and torch are imported lazily inside
+      # functions, so nothing here pulls a GPU stack. math-verify is the only real
+      # dependency, and it is what the two grading tests need.
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest math-verify==0.8.0
+
+      - name: Run the CPU test suite
+        run: python -m pytest test/ -q
+
+      # The blog page is a committed build artifact. Rebuilding it from the committed
+      # template, figures and manifest must reproduce it byte for byte; if it does not,
+      # either someone edited the built page by hand or the build is not deterministic
+      # (an unspecified text encoding did exactly that once, see findings T4d).
+      - name: Blog build is deterministic
+        run: |
+          cp docs/blog/completeness-cliff.html /tmp/committed.html
+          python scripts/build_blog_post.py
+          if ! cmp -s /tmp/committed.html docs/blog/completeness-cliff.html; then
+            echo "::error::rebuilding the blog did not reproduce the committed page"
+            diff <(head -c 4000 /tmp/committed.html) \
+                 <(head -c 4000 docs/blog/completeness-cliff.html) | head -20
+            exit 1
+          fi
+          echo "rebuild is byte-identical to the committed page"
+
+      - name: Published page has no unresolved placeholders or lost characters
+        run: |
+          python - <<'PY'
+          import re, sys
+          html = open("docs/blog/completeness-cliff.html", encoding="utf-8").read()
+          problems = []
+          if re.findall(r"__[A-Z_]+__", html):
+              problems.append(f"unresolved placeholders: {set(re.findall(r'__[A-Z_]+__', html))}")
+          if "�" in html:
+              problems.append("replacement characters present (lossy encoding)")
+          if "—" in html or "&mdash;" in html:
+              problems.append("em-dash present (house style)")
+          if 'class="n" class=' in html:
+              problems.append("duplicate class attribute (styling silently dropped)")
+          if html.count("data:image/png;base64,") != 6:
+              problems.append(f"expected 6 inlined figures, found "
+                              f"{html.count('data:image/png;base64,')}")
+          for p in problems:
+              print(f"::error::{p}")
+          sys.exit(1 if problems else 0)
+          PY

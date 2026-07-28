@@ -1,0 +1,86 @@
+{
+  "run_name": "waitappend_qwen3-4b-instruct_aime",
+  "phase": "injection",
+  "model": "qwen3-4b-instruct",
+  "hf_id": "Qwen/Qwen3-4B-Instruct-2507",
+  "thinking_mode": true,
+  "baseline": "results/base_qwen3-4b-instruct_aime24_25/rollouts.jsonl",
+  "sources": [
+    "wait_append"
+  ],
+  "fractions": [
+    1.0
+  ],
+  "n_samples": 16,
+  "max_new_tokens": 16384,
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "W0_unchanged:prefix1": {
+      "n_questions": 46,
+      "pass@1": 0.002717391304347826,
+      "pass@2": 0.005253623188405798,
+      "pass@4": 0.009782608695652173,
+      "pass@8": 0.016666666666666666,
+      "pass@16": 0.021739130434782608,
+      "n_samples": 736,
+      "accuracy": 0.002717391304347826,
+      "adoption_rate": 0.9918478260869565,
+      "no_answer_rate": 0.005434782608695652,
+      "truncation_rate": 0.05570652173913043,
+      "mean_gen_tokens": 940.5584239130435,
+      "max_gen_tokens": 16384
+    },
+    "W1_wait:prefix1": {
+      "n_questions": 46,
+      "pass@1": 0.04619565217391304,
+      "pass@2": 0.07481884057971015,
+      "pass@4": 0.10912565695174391,
+      "pass@8": 0.1455609607783521,
+      "pass@16": 0.17391304347826086,
+      "n_samples": 736,
+      "accuracy": 0.04619565217391304,
+      "adoption_rate": 0.904891304347826,
+      "no_answer_rate": 0.02717391304347826,
+      "truncation_rate": 0.13451086956521738,
+      "mean_gen_tokens": 2563.1453804347825,
+      "max_gen_tokens": 16384
+    },
+    "W2_neutral:prefix1": {
+      "n_questions": 46,
+      "pass@1": 0.008152173913043478,
+      "pass@2": 0.015036231884057972,
+      "pass@4": 0.025609173435260393,
+      "pass@8": 0.037569676700111486,
+      "pass@16": 0.043478260869565216,
+      "n_samples": 736,
+      "accuracy": 0.008152173913043478,
+      "adoption_rate": 0.9524456521739131,
+      "no_answer_rate": 0.035326086956521736,
+      "truncation_rate": 0.13858695652173914,
+      "mean_gen_tokens": 2329.0339673913045,
+      "max_gen_tokens": 16384
+    },
+    "W3_recheck:prefix1": {
+      "n_questions": 46,
+      "pass@1": 0.02717391304347826,
+      "pass@2": 0.0496376811594203,
+      "pass@4": 0.08545150501672241,
+      "pass@8": 0.13766595723117464,
+      "pass@16": 0.1956521739130435,
+      "n_samples": 736,
+      "accuracy": 0.02717391304347826,
+      "adoption_rate": 0.9198369565217391,
+      "no_answer_rate": 0.02717391304347826,
+      "truncation_rate": 0.125,
+      "mean_gen_tokens": 2356.8940217391305,
+      "max_gen_tokens": 16384
+    }
+  }
+}

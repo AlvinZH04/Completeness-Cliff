@@ -1,0 +1,30 @@
+# Environment that produced the pilot-1 results (conda env name: ssrm_hopper).
+#
+#   conda env create -f environment.yml && conda activate wrong-reason
+#   export LD_LIBRARY_PATH=$CONDA_PREFIX/lib      # REPLACE, do not append: a system
+#                                                 # cuBLAS on the path shadows torch's
+#
+# Hardware for the reported runs: 2x H100 NVL (96 GB), CUDA 12.8, driver >= 550.
+# An earlier env (vllm 0.17.0) shipped a FlashAttention-3 build for sm_52 only, which
+# silently fell back to the Triton backend on H100 and ran roughly 10x slower. If you
+# see that, pass --attention-backend TRITON_ATTN or use the pinned vllm below.
+#
+# The figure and analysis scripts (scripts/*.py) need only matplotlib, so they run in a
+# plain CPU environment; only generation needs vLLM and a GPU.
+name: wrong-reason
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10.20
+  - pip
+  - pip:
+      - torch==2.10.0
+      - vllm==0.19.0
+      - transformers==5.5.0
+      - datasets==4.3.0
+      - numpy==1.26.4
+      - math-verify==0.8.0
+      - reasoning-gym==0.1.19
+      - matplotlib==3.10.9
+      - huggingface-hub>=0.25
+      - pytest>=8

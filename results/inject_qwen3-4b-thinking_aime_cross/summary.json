@@ -1,0 +1,72 @@
+{
+  "run_name": "inject_qwen3-4b-thinking_aime_cross",
+  "phase": "injection",
+  "model": "qwen3-4b-thinking",
+  "hf_id": "Qwen/Qwen3-4B-Thinking-2507",
+  "thinking_mode": true,
+  "baseline": "results/base_qwen3-4b-thinking_aime24_25/rollouts.jsonl",
+  "sources": [
+    "irrelevant_cross"
+  ],
+  "fractions": [
+    0.25,
+    1.0
+  ],
+  "n_samples": 16,
+  "max_new_tokens": 81920,
+  "sampling": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "irrelevant_cross:full_closed": {
+      "n_questions": 60,
+      "pass@1": 0.014583333333333334,
+      "pass@2": 0.025833333333333333,
+      "pass@4": 0.04217948717948718,
+      "pass@8": 0.06332167832167832,
+      "pass@16": 0.08333333333333333,
+      "n_samples": 960,
+      "accuracy": 0.014583333333333334,
+      "adoption_rate": 0.8083333333333333,
+      "no_answer_rate": 0.14479166666666668,
+      "truncation_rate": 0.0625,
+      "mean_gen_tokens": 805.7614583333333,
+      "max_gen_tokens": 4096
+    },
+    "irrelevant_cross:prefix0.25": {
+      "n_questions": 60,
+      "pass@1": 0.721875,
+      "pass@2": 0.8095833333333335,
+      "pass@4": 0.8668498168498168,
+      "pass@8": 0.9011655011655009,
+      "pass@16": 0.9166666666666666,
+      "n_samples": 960,
+      "accuracy": 0.721875,
+      "adoption_rate": 0.06770833333333333,
+      "no_answer_rate": 0.003125,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 19709.24375,
+      "max_gen_tokens": 64665
+    },
+    "irrelevant_cross:prefix1": {
+      "n_questions": 60,
+      "pass@1": 0.5447916666666667,
+      "pass@2": 0.6697222222222224,
+      "pass@4": 0.7601739926739925,
+      "pass@8": 0.824141414141414,
+      "pass@16": 0.8666666666666667,
+      "n_samples": 960,
+      "accuracy": 0.5447916666666667,
+      "adoption_rate": 0.28958333333333336,
+      "no_answer_rate": 0.017708333333333333,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 10639.203125,
+      "max_gen_tokens": 50884
+    }
+  }
+}

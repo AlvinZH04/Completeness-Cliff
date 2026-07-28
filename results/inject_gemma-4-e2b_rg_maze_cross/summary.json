@@ -1,0 +1,72 @@
+{
+  "run_name": "inject_gemma-4-e2b_rg_maze_cross",
+  "phase": "injection",
+  "model": "gemma-4-e2b",
+  "hf_id": "google/gemma-4-E2B-it",
+  "thinking_mode": true,
+  "baseline": "results/base_gemma-4-e2b_rg_maze/rollouts.jsonl",
+  "sources": [
+    "irrelevant_cross"
+  ],
+  "fractions": [
+    0.25,
+    1.0
+  ],
+  "n_samples": 16,
+  "max_new_tokens": 32768,
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": 64,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "irrelevant_cross:full_closed": {
+      "n_questions": 50,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "pass@8": 0.0,
+      "pass@16": 0.0,
+      "n_samples": 800,
+      "accuracy": 0.0,
+      "adoption_rate": 0.7975,
+      "no_answer_rate": 0.00375,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 12.4325,
+      "max_gen_tokens": 1427
+    },
+    "irrelevant_cross:prefix0.25": {
+      "n_questions": 50,
+      "pass@1": 0.4875,
+      "pass@2": 0.6680000000000001,
+      "pass@4": 0.8053186813186811,
+      "pass@8": 0.8857187257187258,
+      "pass@16": 0.92,
+      "n_samples": 800,
+      "accuracy": 0.4875,
+      "adoption_rate": 0.01625,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 4375.405,
+      "max_gen_tokens": 10817
+    },
+    "irrelevant_cross:prefix1": {
+      "n_questions": 50,
+      "pass@1": 0.09125,
+      "pass@2": 0.14983333333333332,
+      "pass@4": 0.2254725274725275,
+      "pass@8": 0.30940792540792544,
+      "pass@16": 0.4,
+      "n_samples": 800,
+      "accuracy": 0.09125,
+      "adoption_rate": 0.6375,
+      "no_answer_rate": 0.00125,
+      "truncation_rate": 0.00125,
+      "mean_gen_tokens": 760.42125,
+      "max_gen_tokens": 32768
+    }
+  }
+}

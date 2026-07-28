@@ -1,0 +1,108 @@
+{
+  "run_name": "smoke_inject",
+  "phase": "injection",
+  "model": "qwen3-4b-thinking",
+  "hf_id": "Qwen/Qwen3-4B-Thinking-2507",
+  "thinking_mode": true,
+  "baseline": "results/smoke_base/rollouts.jsonl",
+  "sources": [
+    "self_wrong",
+    "irrelevant",
+    "corrupted",
+    "wrong_conclusion"
+  ],
+  "fractions": [
+    0.5,
+    1.0
+  ],
+  "n_samples": 4,
+  "max_new_tokens": 8192,
+  "sampling": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "corrupted:prefix0.5": {
+      "n_questions": 2,
+      "pass@1": 1.0,
+      "pass@2": 1.0,
+      "pass@4": 1.0,
+      "n_samples": 8,
+      "accuracy": 1.0,
+      "adoption_rate": 0.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 4326.25,
+      "max_gen_tokens": 6636
+    },
+    "irrelevant:full_closed": {
+      "n_questions": 4,
+      "pass@1": 0.25,
+      "pass@2": 0.25,
+      "pass@4": 0.25,
+      "n_samples": 16,
+      "accuracy": 0.25,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 170.625,
+      "max_gen_tokens": 655
+    },
+    "irrelevant:prefix0.5": {
+      "n_questions": 4,
+      "pass@1": 0.375,
+      "pass@2": 0.45833333333333337,
+      "pass@4": 0.5,
+      "n_samples": 16,
+      "accuracy": 0.375,
+      "adoption_rate": 0.75,
+      "no_answer_rate": 0.0625,
+      "truncation_rate": 0.0625,
+      "mean_gen_tokens": 4457.8125,
+      "max_gen_tokens": 8192
+    },
+    "irrelevant:prefix1": {
+      "n_questions": 4,
+      "pass@1": 0.25,
+      "pass@2": 0.25,
+      "pass@4": 0.25,
+      "n_samples": 16,
+      "accuracy": 0.25,
+      "adoption_rate": 1.0,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 135.125,
+      "max_gen_tokens": 626
+    },
+    "wrong_conclusion:full_closed": {
+      "n_questions": 4,
+      "pass@1": 0.0625,
+      "pass@2": 0.125,
+      "pass@4": 0.25,
+      "n_samples": 16,
+      "accuracy": 0.0625,
+      "adoption_rate": 0.75,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 777.4375,
+      "max_gen_tokens": 3497
+    },
+    "wrong_conclusion:prefix1": {
+      "n_questions": 4,
+      "pass@1": 0.375,
+      "pass@2": 0.5833333333333334,
+      "pass@4": 0.75,
+      "n_samples": 16,
+      "accuracy": 0.375,
+      "adoption_rate": 0.0,
+      "no_answer_rate": 0.5625,
+      "truncation_rate": 0.5625,
+      "mean_gen_tokens": 7767.0,
+      "max_gen_tokens": 8192
+    }
+  }
+}

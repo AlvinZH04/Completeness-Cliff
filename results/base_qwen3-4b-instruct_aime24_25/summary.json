@@ -1,0 +1,35 @@
+{
+  "run_name": "base_qwen3-4b-instruct_aime24_25",
+  "phase": "baseline",
+  "model": "qwen3-4b-instruct",
+  "hf_id": "Qwen/Qwen3-4B-Instruct-2507",
+  "thinking_mode": true,
+  "dataset": "aime24_25",
+  "n_questions": 60,
+  "n_samples": 16,
+  "max_new_tokens": 16384,
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.8,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "metrics": {
+    "n_questions": 60,
+    "pass@1": 0.5479166666666667,
+    "pass@2": 0.6554166666666669,
+    "pass@4": 0.7292673992673994,
+    "pass@8": 0.7683152033152031,
+    "pass@16": 0.7833333333333333,
+    "n_samples": 960,
+    "accuracy": 0.5479166666666667,
+    "adoption_rate": 0.0,
+    "no_answer_rate": 0.0375,
+    "truncation_rate": 0.12395833333333334,
+    "mean_gen_tokens": 7082.153125,
+    "max_gen_tokens": 16384
+  },
+  "wrong_trace_coverage": 0.7666666666666667
+}

@@ -1,0 +1,35 @@
+{
+  "run_name": "base_qwen3-4b-thinking_aime24_25",
+  "phase": "baseline",
+  "model": "qwen3-4b-thinking",
+  "hf_id": "Qwen/Qwen3-4B-Thinking-2507",
+  "thinking_mode": true,
+  "dataset": "aime24_25",
+  "n_questions": 60,
+  "n_samples": 16,
+  "max_new_tokens": 81920,
+  "sampling": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "metrics": {
+    "n_questions": 60,
+    "pass@1": 0.821875,
+    "pass@2": 0.8687499999999999,
+    "pass@4": 0.892554945054945,
+    "pass@8": 0.9086156436156436,
+    "pass@16": 0.9166666666666666,
+    "n_samples": 960,
+    "accuracy": 0.821875,
+    "adoption_rate": 0.0,
+    "no_answer_rate": 0.0,
+    "truncation_rate": 0.0,
+    "mean_gen_tokens": 21590.4875,
+    "max_gen_tokens": 61000
+  },
+  "wrong_trace_coverage": 0.4666666666666667
+}

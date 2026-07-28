@@ -1,0 +1,75 @@
+[ARCHIVED as sent 2026-07-20. Some claims here were corrected on 2026-07-25 after an
+external review: see docs/findings.md section "Review corrections". In particular the
+instruct model does NOT gain ~0 everywhere, the blatant-vs-subtle mismatch contrast is
+retracted, and the run total is 91,760 generations rather than ~75k.]
+
+Hi Daniel, following our last discussion I had done the following:
+
+I set up the full experimental pipeline for the wrong-reasoning question we discussed:
+given a model (instruct or reasoning), if we force it to condition on an INCORRECT
+thinking trace (a prefix or the complete rollout, injected inside its think block),
+can it still answer correctly among k sampled attempts? I ran the pilot on a matched
+model pair (Qwen3-4B-Thinking-2507 vs Qwen3-4B-Instruct-2507) plus Gemma-4-E2B as a
+cross-family check, on AIME 2024+25 and reasoning-gym puzzles (maze, sudoku), with
+N=16 samples per question per condition, about 75k rollouts total on our 2 H100s.
+
+The pipeline (Figure 0): baseline rollouts with each model's card-recommended sampling
+params -> harvest the model's own wrong solutions as the injection material -> re-prompt
+with wrong traces spliced into the think channel, varying (a) how much of the trace is
+injected (25/50/75/100%), (b) whether the model may keep thinking afterward or must
+answer immediately, and (c) what KIND of wrongness it is (own wrong solution, another
+question's solution, another DOMAIN's solution, a bare wrong claim, a corrupted correct
+solution) -> grade only the generated tokens (math_verify / task verifiers) -> pass@k,
+plus an "adoption" metric (did it echo the trace's answer?) and a token-level audit of
+every continuation.
+
+Main findings:
+
+1. The completeness cliff (Figure 1, the headline). Partial wrong prefixes only reshape
+   the answer distribution: through 75% of its own wrong reasoning the thinking model
+   still recovers within 16 samples essentially always (pass@16 = 1.00 -> 0.91). But
+   given 100% of the wrong trace, with unlimited room to keep thinking, pass@16
+   collapses to 0.04, identical to the instruct model and identical to forcing an
+   immediate answer. Reasoning training delays the cliff; it does not remove it.
+   (Five replications across both model families.)
+
+2. The right to keep thinking is only worth something to trained models, and never on
+   their own finished reasoning (Figure 2). The open-vs-forced-answer gain is +0.86 for
+   the thinking model on bare wrong assertions and +0.36 on irrelevant traces, but
+   ~0.02 on its own complete wrong solution; the instruct model gains ~0 everywhere.
+   Gemma generates thought channels but gains ~nothing from them being open, so this
+   re-examination disposition comes from reasoning-RL training, not from having a
+   thinking mode.
+
+3. Recovery tracks how much re-thinking the injection provokes (Figure 3). Foreign
+   traces trigger ~20k tokens of re-derivation; the model's own completed reasoning
+   triggers ~1k: it often literally writes "wait" and then concludes anyway.
+   Seeing is not doubting.
+
+4. The reasoning scaffold persuades, not the conclusion (Figure 4). The same wrong
+   answer is rejected when asserted without steps (recovery 0.51) but accepted when
+   wrapped in the model's own plausible derivation (0.02). Arithmetic errors inside a
+   correct scaffold are silently repaired (0.89). A complete solution to a different
+   problem sits in between, and blatant domain mismatch (a maze trace inside an AIME
+   question) is escaped far more often than subtle mismatch: recovery is gated on
+   mismatch detection, not correctness checking.
+
+5. Anatomy of the rare escapes: every success under a complete own-wrong trace required
+   an external anchor. Either one question where the model's prior is near-certain (15/16
+   baseline; possibly memorized) and the trace itself hedges, or one where a cheap
+   checkable certificate (a subset sum) catches the error during the model's habitual
+   verification section. Never unprompted distrust of the chain itself.
+
+Caveats: 4B-class models only, two families / one RL recipe, model-generated wrong
+traces; a few artifact cells are excluded and documented in the report.
+
+Proposed next steps (in priority order): (1) a "Wait,"-append intervention after
+complete wrong traces, a one-token test of the commitment interpretation; (2) a scale
+sweep (9B/14B/30B); (3) an R1-distill replication to test whether the recovery
+disposition is training-recipe-general; (4) LLM-written reasoning-error corruption.
+Each is <=2 GPU-days with the existing pipeline.
+
+Everything is reproducible from the repo (docs/report_pilot1.md has the full write-up,
+figures in docs/figures/, per-finding provenance in docs/findings.md). Happy to walk
+through any part in detail, and I'd value your read on whether the completeness cliff
+is the right headline claim for a write-up, and which next step you'd prioritize.

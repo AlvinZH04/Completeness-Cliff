@@ -1,0 +1,86 @@
+{
+  "run_name": "waitappend_n64_qwen3-4b-thinking_aime",
+  "phase": "injection",
+  "model": "qwen3-4b-thinking",
+  "hf_id": "Qwen/Qwen3-4B-Thinking-2507",
+  "thinking_mode": true,
+  "baseline": "results/base_qwen3-4b-thinking_aime24_25/rollouts.jsonl",
+  "sources": [
+    "wait_append"
+  ],
+  "fractions": [
+    1.0
+  ],
+  "n_samples": 64,
+  "max_new_tokens": 81920,
+  "sampling": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "top_k": 20,
+    "min_p": 0.0,
+    "presence_penalty": 0.0
+  },
+  "seed": 0,
+  "cells": {
+    "W0_unchanged:prefix1": {
+      "n_questions": 28,
+      "pass@1": 0.023995535714285716,
+      "pass@2": 0.03484623015873016,
+      "pass@4": 0.043825512092727094,
+      "pass@8": 0.053066669704885085,
+      "pass@16": 0.06930272093908149,
+      "n_samples": 1792,
+      "accuracy": 0.023995535714285716,
+      "adoption_rate": 0.8487723214285714,
+      "no_answer_rate": 0.09207589285714286,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 1062.794642857143,
+      "max_gen_tokens": 15986
+    },
+    "W1_wait:prefix1": {
+      "n_questions": 28,
+      "pass@1": 0.03180803571428571,
+      "pass@2": 0.05300453514739229,
+      "pass@4": 0.0786032882216874,
+      "pass@8": 0.10435947191046233,
+      "pass@16": 0.1326379745991678,
+      "n_samples": 1792,
+      "accuracy": 0.03180803571428571,
+      "adoption_rate": 0.9235491071428571,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 1636.044642857143,
+      "max_gen_tokens": 21971
+    },
+    "W2_neutral:prefix1": {
+      "n_questions": 28,
+      "pass@1": 0.0,
+      "pass@2": 0.0,
+      "pass@4": 0.0,
+      "pass@8": 0.0,
+      "pass@16": 0.0,
+      "n_samples": 1792,
+      "accuracy": 0.0,
+      "adoption_rate": 0.9676339285714286,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 1024.1339285714287,
+      "max_gen_tokens": 3453
+    },
+    "W3_recheck:prefix1": {
+      "n_questions": 28,
+      "pass@1": 0.026227678571428572,
+      "pass@2": 0.048664257369614515,
+      "pass@4": 0.0850972495026567,
+      "pass@8": 0.13686141788804232,
+      "pass@16": 0.2008068508618898,
+      "n_samples": 1792,
+      "accuracy": 0.026227678571428572,
+      "adoption_rate": 0.9285714285714286,
+      "no_answer_rate": 0.0,
+      "truncation_rate": 0.0,
+      "mean_gen_tokens": 1502.564174107143,
+      "max_gen_tokens": 19284
+    }
+  }
+}
