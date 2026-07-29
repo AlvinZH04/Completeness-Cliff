@@ -65,6 +65,9 @@
   .dateline a{color:var(--muted);text-decoration:underline;text-underline-offset:2px}
   .mono{font-family:var(--mono);font-size:.86em}
   code{font-family:var(--mono);font-size:.82em;background:var(--code);padding:.12em .4em;border-radius:4px}
+  pre{background:var(--code);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;overflow-x:auto;
+    font-family:var(--mono);font-size:13px;line-height:1.5;margin:16px 0}
+  .cited{font-family:var(--sans);font-size:15px;color:var(--muted)}
   header.hd{border-bottom:1px solid var(--rule);margin-bottom:34px;padding-top:44px}
   .backlink{font-family:var(--sans);font-size:13.5px;color:var(--muted);margin-bottom:18px}
 
@@ -686,6 +689,24 @@
   <p>One artifact worth separating out: the <em>thinking</em> model&rsquo;s own-complete cell shows 0%
   truncation but an 8.3% no-answer rate. Those continuations stop on their own without a parseable answer, so that
   is a grading-coverage question, separate from censoring.</p>
+
+  <p class="cited"><strong>Code and artifacts.</strong> The injection and grading code, per-question aggregates,
+  figure inputs, run summaries, and the tests behind every published number are available at
+  <a href="https://github.com/AlvinZH04/Completeness-Cliff">github.com/AlvinZH04/Completeness-Cliff</a>. The injected
+  wrong-trace bank is released separately at
+  <a href="https://huggingface.co/datasets/AZH04/wrong-reasoning-traces">huggingface.co/datasets/AZH04/wrong-reasoning-traces</a>.</p>
+  <p class="cited"><strong>Open to discussion.</strong> Comments, questions, and pushback are all welcome.
+  I&rsquo;m reachable at <a href="mailto:bzhang90@jh.edu">bzhang90@jh.edu</a> and always happy to discuss this work.</p>
+  <p class="cited"><strong>Cited as:</strong> Zhang, Alvin (2026). &ldquo;The completeness cliff: language models
+  escape wrong reasoning until it&rsquo;s finished.&rdquo; <em>wrong_reason notes</em>.
+  <a href="https://alvinzh04.github.io/blog/completeness-cliff.html">alvinzh04.github.io/blog/completeness-cliff.html</a></p>
+  <pre>@misc{zhang2026completenesscliff,
+  title        = {The completeness cliff: language models escape wrong reasoning until it's finished},
+  author       = {Zhang, Alvin},
+  year         = {2026},
+  howpublished = {\url{https://alvinzh04.github.io/blog/completeness-cliff.html}},
+  note         = {wrong\_reason notes}
+}</pre>
 
   <h2 id="refs">Models, data, and references</h2>
 
