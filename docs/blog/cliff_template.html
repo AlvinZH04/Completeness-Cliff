@@ -9,7 +9,12 @@
 <meta property="og:title" content="The completeness cliff: models escape wrong reasoning until it's finished">
 <meta property="og:description" content="Inject an incorrect chain of thought into a language model and it recovers easily, until the trace is complete. A finished wrong rationale is adopted almost every time, and only the reasoning-trained model re-derives when handed a complete but foreign rationale.">
 <meta property="og:url" content="https://alvinzh04.github.io/blog/completeness-cliff.html">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://alvinzh04.github.io/blog/assets/completeness-cliff.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The completeness cliff: pass@16 stays near 1.0 as more of a model's own wrong reasoning is injected, then collapses when the trace is complete.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://alvinzh04.github.io/blog/assets/completeness-cliff.png">
 <title>The completeness cliff: models escape wrong reasoning until it's finished</title>
 <script>
   (function () {
@@ -137,9 +142,8 @@
     something still to be worked on, and a finished one as a conclusion to report, whether or not it happens to be
     right.</p>
 
-    <p style="margin:.8em 0 0">Two further results fill that in. The reasoning-trained model is the only one that
-    spends its extra thinking starting over, and it does so only when the rationale it inherits belongs to a
-    different problem. And when the wrong answer is held fixed while the reasoning around it varies, a bare claim, a
+    <p style="margin:.8em 0 0">Two further results fill that in. When given a complete rationale from another
+    problem, only the reasoning-trained model reliably discards it and starts over. And when the wrong answer is held fixed while the reasoning around it varies, a bare claim, a
     generic-sounding rationale and a short problem-specific one all cost the model very little, while its own
     completed derivation costs it nearly everything. Whatever is doing the damage here, it is not the mere presence
     of plausible-looking steps.</p>
@@ -148,6 +152,11 @@
     everything measured here is on competition math problems that each model could already solve. The puzzle tasks
     the study also ran are in the repository, where they turned out to leave too few usable questions to carry a
     result.</p>
+
+    <p style="margin:.9em 0 0;font-size:15.5px">Code and per-question aggregates are at
+    <a href="https://github.com/AlvinZH04/Completeness-Cliff"><b>github.com/AlvinZH04/Completeness-Cliff</b></a>, and
+    the injected wrong-trace bank is at
+    <a href="https://huggingface.co/datasets/AZH04/wrong-reasoning-traces"><b>huggingface.co/datasets/AZH04/wrong-reasoning-traces</b></a>.</p>
   </div>
 
   <nav class="toc">
@@ -264,8 +273,8 @@
 
   <p><strong>The two models on the same questions.</strong> Because each model&rsquo;s subset is selected from its own
   baseline, the two curves above are not measured on identical questions. Restricting to the
-  <strong>15 AIME questions in both subsets</strong> makes the comparison exact, and it sharpens the picture rather
-  than softening it. Through the middle the thinking model is clearly ahead (pass@16 <span class="num">1.00</span> vs
+  <strong>15 AIME questions in both subsets</strong> makes the comparison exact, and the contrast only sharpens.
+  Through the middle the thinking model is clearly ahead (pass@16 <span class="num">1.00</span> vs
   <span class="num">0.80</span> at a 50% prefix, and <span class="num">0.93</span> [0.80, 1.00] vs
   <span class="num">0.47</span> [0.20, 0.73] at 75%), so reasoning training really does buy more road before the edge.
   At 100% both fall off it: <span class="num">0.07</span> (one question of 15) against <span class="num">0.00</span>.
@@ -278,19 +287,30 @@
   behavior.</div>
 
     <h2 id="trained">4. When models use the extra thinking</h2>
-  <p>Why does a partial trace get re-examined and a complete one get rubber-stamped? A natural guess is architectural:
-  the model has a thinking channel, and an open channel invites second thoughts. Having the channel turns out not to be
-  what does the work, though the story is more specific than I first thought.</p>
-  <p>Measure the <strong>open-block premium</strong>: for the same injected content, how much does <em>letting the model
-  keep thinking</em> (vs. forcing an immediate answer) raise recovery?</p>
+  <p>Why does a partial trace get re-examined and a complete one get rubber-stamped? A tempting explanation is the
+  <code>&lt;think&gt;</code> block: the thinking model lasts longer on the cliff because it has a place to reconsider,
+  and the instruct model falls earlier because it does not. Testing that directly shows the block itself is not what
+  matters. What matters is whether the model actually spends the room re-deriving, and the three models differ sharply
+  in when they do.</p>
+  <p>To measure this, I compute an <strong>open-block premium</strong> for each condition in Figure 2, defined by
+  running the condition in two versions that differ only in what follows the injected trace. In the <em>continue-thinking</em> version the trace is spliced in and left
+  unfinished, so the model can add as much reasoning of its own as it wants before answering. In the
+  <em>forced-answer</em> version the same trace is closed off (the <code>&lt;/think&gt;</code> tag is emitted, or the
+  instruct response continues with &ldquo;Therefore, the final answer is&rdquo;), so the model must produce an answer
+  with no room to reason first. The premium is pass@1 in the first version minus pass@1 in the second: how much of the
+  recovery is bought purely by the room to keep thinking. To read one bar concretely: handed a complete solution to a
+  <em>different</em> AIME question, the thinking model scores <span class="num">0.05</span> when forced to answer
+  immediately and <span class="num">0.46</span> when allowed to keep thinking, so its middle bar shows the difference,
+  <span class="num">+0.41</span>.</p>
 
   <figure>
     <img src="__FIG2__" alt="Grouped bar chart of open-block premium for three models across three injected conditions on AIME.">
-    <figcaption><span class="fignum">Figure 2. Who spends the open block.</span> pass@1 gain from keeping the block
-    open vs. forcing an answer, same injected content in both, on AIME. The first two conditions use all 60 questions
-    for every model; the third is limited to questions where that model produced a wrong trace, so its n differs. The
-    leftmost group&rsquo;s forced-answer baseline is degraded by answer-budget truncation, so those three bars are
-    upper bounds.</figcaption>
+    <figcaption><span class="fignum">Figure 2. Who spends the open block.</span> Each bar is a <b>difference between
+    two pass@1 scores</b> for the same injected content on AIME: pass@1 when the model may continue thinking, minus
+    pass@1 when the answer is forced immediately. The two underlying scores are not plotted, only their gap. The first
+    two conditions use all 60 questions for every model; the third is limited to questions where that model produced a
+    wrong trace, so its n differs. The leftmost group&rsquo;s forced-answer baseline is degraded by answer-budget
+    truncation, so those three bars are upper bounds.</figcaption>
   </figure>
 
   <p>The middle group is where the three models come apart. Handed a complete, well-formed rationale that belongs to
@@ -323,11 +343,11 @@
 
   <p>Why does the extra space help on a foreign rationale but not on the model&rsquo;s own finished chain? The
   continuation lengths give an indirect answer. Recovery and the amount of <em>fresh re-derivation</em> the injection
-  provokes move together, and a complete own-wrong trace provokes almost none. This part of the picture is the
-  <em>least</em> novel: <a href="#r-yang">Yang et al.</a> established the identify-but-fail-to-recover gap by measuring
-  identification and recovery separately, and <a href="#r-snowball">Zhang et al.</a> had already shown models can flag
-  claims as wrong in isolation that they will not retract inside their own generation. What the audit adds is the
-  token-level shape of it.</p>
+  provokes move together, and a complete own-wrong trace provokes almost none. The failure itself is not new:
+  <a href="#r-yang">Yang et al.</a> measured identification and recovery separately and found models that notice an
+  injected thought is unhelpful still fail to recover from it, and <a href="#r-snowball">Zhang et al.</a> showed models
+  will call a claim wrong in isolation yet leave it standing inside their own generation. What Figure 3 adds is what
+  the failure looks like at the token level.</p>
 
   <figure>
     <img src="__FIG3__" alt="Scatter of recovery rate versus mean continuation length across five injection conditions.">
@@ -351,25 +371,39 @@
     <img src="__FIG4__" alt="Horizontal bar chart of recovery for five kinds of injected wrong content on one common question set.">
     <figcaption><span class="fignum">Figure 4. The ordering across kinds of wrongness.</span> Recovery by <em>kind</em>
     of injected content (Qwen3-4B-Thinking, AIME, model may keep thinking). All five bars use the <b>same 23
-    questions</b>, with 95% question-level bootstrap intervals.</figcaption>
+    questions</b>, with 95% question-level bootstrap intervals. The dashed line is the <b>baseline</b>: those same 23
+    questions asked normally, with nothing injected and no trace in the prompt, where the model scores pass@1
+    <b>0.75</b>. A bar to the left of it means the injection cost the model accuracy; the one bar to its right is
+    explained below.</figcaption>
   </figure>
 
   <p>The span runs from <span class="num">0.89</span> down to <span class="num">0.02</span> across five ways of being
   wrong, on identical questions. A correct chain with a corrupted arithmetic step gets silently repaired
   (<span class="num">0.89</span>), which suggests the model leans on the <em>shape</em> of a derivation and patches the
-  number that looks off. A generic pseudo-rationale is escaped about half the time (<span class="num">0.51</span>).
+  number that looks off.</p>
+
+  <p>That is also the one bar that sits <em>above</em> the baseline, which needs saying plainly, because injecting
+  wrong content should not make a model better than it is on its own. The answer is in how this particular condition
+  is built. Its injected text is 75% of a genuinely <strong>correct</strong> derivation, and the only thing wrong with
+  it is that the integers in its last few hundred characters have been bumped by one or two. The model is handed most
+  of a working solution and has to fix some arithmetic, which is an easier task than solving an AIME problem from a
+  blank page, so it scores above its unaided 0.75. The other four bars carry a genuinely wrong line of argument, and
+  all four land below the baseline.</p>
+
+  <p>Back to the ordering. A generic pseudo-rationale is escaped about half the time (<span class="num">0.51</span>).
   Complete rationales that are well-formed but foreign cost more, and the wrong-domain and
   wrong-question versions land on top of each other (<span class="num">0.39</span> and
   <span class="num">0.38</span>, intervals heavily overlapping), so this pilot gives no evidence that the obviousness of
   a mismatch decides anything. The model&rsquo;s own completed wrong reasoning sits far below all of them at
   <span class="num">0.02</span>.</p>
 
-  <p>The obvious reading is that the reasoning scaffold, not the conclusion, is what persuades. That is what I believed
-  when I first wrote this section, and it is wrong. The conditions above differ in more than one way at once: the
-  generic pseudo-rationale asserts an answer derived by perturbing the gold answer, while the self-wrong condition
-  carries whatever answer that rollout happened to reach, so <strong>the wrong answer is not held fixed across
-  bars</strong>. They also differ in length, in task specificity, and in whether the model itself wrote the text. So I
-  ran the experiment that separates those.</p>
+  <p>The tempting conclusion is that what persuades the model is the reasoning around the answer, not the answer
+  itself. Figure 4 cannot establish that, because its five bars differ along several dimensions at once. The most
+  damaging one is that <strong>the wrong answer is not held fixed across bars</strong>: the generic pseudo-rationale
+  asserts an answer built by perturbing the gold answer, while the own-wrong bar carries whatever answer that rollout
+  happened to reach. The bars also differ in length, in how specific the text is to the question at hand, and in
+  whether the model wrote the text itself. Any one of those could produce this ordering on its own, so isolating the
+  scaffold requires an experiment that varies it alone.</p>
 
   <p><strong>The paired ablation.</strong> For each question, fix <em>one</em> wrong answer: the answer the
   model&rsquo;s own wrong rollout reached. Then present that same answer four ways, on the same questions, and let the
@@ -402,9 +436,8 @@
   collapse and they point in opposite directions in the two models. Presentation has modest effects; none of them comes
   close to explaining what the model&rsquo;s own finished chain does.</p>
 
-  <p>Two details sharpen it. Arm A leaves <strong>pass@16 at 0.82, exactly the baseline value</strong>, so a bare wrong
-  assertion does not damage the model&rsquo;s ability to reach the answer at all and only biases which answer a single
-  sample lands on. And the continuation lengths run the other way from persuasion: arm A provokes the <em>most</em>
+  <p>Two details sharpen it. Arm A leaves <strong>pass@16 at 0.82, the baseline value</strong>, so a bare wrong
+  assertion does not reduce observed pass@16, although it still shifts where a single sample lands. And the continuation lengths run the other way from persuasion: arm A provokes the <em>most</em>
   fresh work at about 32,000 tokens, C about 26,000, and D about <strong>1,100</strong>. The model argues at length
   with a bare claim and simply ratifies its own finished derivation.</p>
 
@@ -418,9 +451,10 @@
   cheap prediction to test. I append <em>&ldquo;Wait, let me double-check that.&rdquo;</em> to the model&rsquo;s
   finished wrong derivation and let it continue exactly as before.</p>
 
-  <p>It recovers part of the lost ground in both models. Pass@16 roughly triples, from <span class="num">0.07</span> to
-  <span class="num">0.20</span> for the thinking model and from <span class="num">0.02</span> to
-  <span class="num">0.20</span> for the instruct model, gaining questions and losing almost none in either. These are
+  <p>It recovers part of the lost ground in both models. The thinking model goes from pass@16
+  <span class="num">0.07</span> to <span class="num">0.20</span>, roughly a tripling, and the instruct model from
+  <span class="num">0.02</span> to <span class="num">0.20</span>, closer to a ninefold rise off a much lower floor.
+  Both land in the same place; they simply start from different ones. Each gains questions and loses almost none. These are
   directional paired sign tests, stated one-sided: <em>p</em> = 0.035 for thinking (two-sided 0.070, so suggestive more
   than conventionally significant) and <em>p</em> = 0.004 for instruct (two-sided 0.008). It is a partial rescue of
   about a quarter of the lost ground, not a repair, and both models still miss most of these questions. But the ability
@@ -466,12 +500,13 @@
   sibling settles on a single wrong number every time. Across all 60 AIME questions this no-reasoning accuracy is
   essentially zero for both models.</p>
 
-  <p>Nor is the question itself in the training data in any verbatim sense. Handed the first 40% of the problem
+  <p>The prefix-completion probe also finds no evidence of verbatim recall. Handed the first 40% of the problem
   text with no chat template and asked to continue it greedily, the model reproduces almost none of the true
   remainder for this question: a longest-match score of 0.015, the <strong>lowest of all 60 questions</strong>.
   And there is no training-cutoff signature anywhere in the set, with AIME 2024 and 2025 scoring 0.093 and 0.078.
   The most telling artifact is what the model writes when forced: <em>&ldquo;12. Wait, no, hold on, I need to
-  think carefully here. Let me start over.&rdquo;</em> It cannot look the answer up. It wants to derive it.</p>
+  think carefully here. Let me start over.&rdquo;</em> In this prompt it does not retrieve the answer. It tries to
+  derive it.</p>
 
   <p>So the &ldquo;I recall the answer is 82&rdquo; line in the winning continuations is poor evidence of retrieval,
   which is its own small lesson about taking a model&rsquo;s self-report at face value. The probes establish something
@@ -548,14 +583,13 @@
     responds to surface cues, and it stops entirely at the model&rsquo;s own polished chain.</li>
     <li><strong>A small prompt reopens some finished chains.</strong> Appending an explicit instruction to
     double-check recovers roughly a quarter of the lost ground in both models (section 6). It is a partial rescue and
-    not a fix, but it means the ability to catch the error is largely present and simply is not deployed.</li>
+    not a fix: some recovery remains available but is usually not deployed.</li>
   </ul>
 
-  <div class="callout">Each limit on the above is stated next to the result it bears on rather than collected here:
-  the selected subsets in section 3, the wide intervals at the cliff edge, the instruct question set that contains the
-  thinking model&rsquo;s rather than being independent of it in section 5, and the instruct cells sitting above this
-  project&rsquo;s truncation gate. A few artifact cells are excluded, and documented in the repository. Taken together
-  they are the reason I would bet on the <em>shape</em> of this well before any single number in it.</div>
+  <div class="callout">The main limits are stated where they matter: selected question subsets and wide
+  cliff-edge intervals in section 3, overlapping model-specific question sets in section 5, and above-gate truncation
+  in several instruct cells. A few artifact cells are excluded, and documented in the repository. I trust the overall
+  shape more than any single estimate.</div>
 
   <p>The plotted aggregates are inspectable from the
   <a href="https://github.com/AlvinZH04/Completeness-Cliff">code repository</a>. Figures 1, 4 and 5 read per-question
@@ -581,7 +615,7 @@
 
   <p><strong>Can a model be trained to reopen a finished chain?</strong> The intervention in section 6 is the
   encouraging part of this study. Appending a short instruction to double-check recovers roughly a quarter of the lost
-  ground, which means the ability to catch the error is largely present and simply is not deployed. That is a training
+  ground, which means some recovery remains available but is usually not deployed. That is a training
   target rather than a capability gap. The obvious approach builds supervision out of exactly the material this pilot
   produces: completed wrong derivations paired with the correction the model can be prompted into, used either as
   fine-tuning data or as a reward signal for re-examination. <a href="#r-amjith">Amjith et al.</a> take a version of
@@ -621,17 +655,15 @@
   seed and every other experimental unit fixed, so this is a budget-sensitivity check rather than an independent
   replication.</p>
 
-  <p><strong>The two runs are not sample-paired, which rules out one check and strengthens
-  another.</strong> I had intended to compare each sample to itself across the two budgets. That is
-  not possible: both runs use seed 0 and identical sampling parameters, but the rerun also raised
-  the model context length, and vLLM is not bitwise reproducible across that change. Divergence
-  tracks generation length almost monotonically, from 97% of samples identical in the shortest arm
-  down to <strong>0.3%</strong> in the longest. So the samples that would answer the question, the
-  ones truncated at 16k and given more room at 32k, are exactly the ones that diverge. I am
-  reporting the alignment audit rather than a transition analysis it cannot support. The flip side
-  is that where alignment is near zero the 32k run is effectively a fresh draw, so its agreement
-  with the 16k aggregates is closer to a re-sample check than to a re-scoring of the same
-  trajectories.</p>
+  <p><strong>The two runs cannot be paired sample by sample.</strong> I had intended to compare each
+  sample to itself across the two budgets. That is not possible: both runs use seed 0 and identical
+  sampling parameters, but the rerun also raised the model context length, and vLLM is not bitwise
+  reproducible across that change. Divergence tracks generation length almost monotonically, from
+  97% of samples identical in the shortest arm down to <strong>0.3%</strong> in the longest. So the
+  samples that would answer the question, the ones truncated at 16k and given more room at 32k, are
+  exactly the ones that diverge. The alignment audit therefore rules out a 16k-to-32k transition
+  analysis, and I treat the 32k run only as an aggregate budget-sensitivity check, not as
+  independent evidence.</p>
 
   <p><strong>The terminated-only column is descriptive, not a correction.</strong> The last column recomputes
   accuracy over only the samples that stopped on their own. For arms with real recovery it comes out slightly

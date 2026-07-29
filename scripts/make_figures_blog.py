@@ -58,6 +58,12 @@ FIGDIR = os.environ.get("WR_FIGDIR", os.path.join(ROOT, "docs", "figures_blog"))
 os.makedirs(FIGDIR, exist_ok=True)
 
 
+# Matplotlib stamps its own version into a PNG tEXt chunk, so a patch-version bump
+# rewrites every figure with byte-different, pixel-identical content. Dropping the
+# stamp keeps a regenerated figure's diff limited to figures that actually changed.
+SAVE_KW = dict(bbox_inches="tight", metadata={"Software": None})
+
+
 def clean(ax):
     ax.grid(axis="x", visible=False)
     ax.tick_params(length=0)
@@ -120,7 +126,7 @@ fig.text(0.5, -0.03,
          "Bars are 95% question-level bootstrap intervals.",
          ha="center", fontsize=11.5, color=GRAY)
 fig.tight_layout()
-fig.savefig(f"{FIGDIR}/fig1_completeness_cliff.png", bbox_inches="tight")
+fig.savefig(f"{FIGDIR}/fig1_completeness_cliff.png", **SAVE_KW)
 plt.close(fig)
 
 # ================================================ fig 2: open-block premium
@@ -165,7 +171,7 @@ fig.text(0.5, -0.055,
          "so its n differs by model.",
          ha="center", fontsize=11.5, color=GRAY)
 fig.tight_layout()
-fig.savefig(f"{FIGDIR}/fig2_open_block_premium.png", bbox_inches="tight")
+fig.savefig(f"{FIGDIR}/fig2_open_block_premium.png", **SAVE_KW)
 plt.close(fig)
 
 # ==================================== fig 3: recovery vs re-thinking volume
@@ -201,7 +207,7 @@ fig.text(0.5, -0.045,
          "length and recovery co-vary here,\nwhich does not by itself establish that one causes the other.",
          ha="center", fontsize=11.5, color=GRAY)
 fig.tight_layout()
-fig.savefig(f"{FIGDIR}/fig3_rethinking_volume.png", bbox_inches="tight")
+fig.savefig(f"{FIGDIR}/fig3_rethinking_volume.png", **SAVE_KW)
 plt.close(fig)
 
 # ==================================== fig 4: which wrongness (one common subset)
@@ -232,7 +238,8 @@ for y, v, ci in zip(ypos, vals, cis):
             fontsize=14, color=BLACK, fontweight="bold")
 base = cell(PAIR4, "baseline")["pass@1"]
 ax.axvline(base, color=GRAY, lw=1.5, ls="--", zorder=2)
-ax.text(base, 4.62, f"baseline {base:.2f}", fontsize=12.5, color=GRAY, ha="center")
+ax.text(base, 4.62, f"baseline {base:.2f}  (nothing injected)",
+        fontsize=12.5, color=GRAY, ha="center")
 ax.set_yticks(ypos, labels, fontsize=12.5, color=INK)
 ax.set_xlabel("pass@1 with the wrong trace injected (model may keep thinking)",
               fontsize=14.5, color=INK)
@@ -248,7 +255,7 @@ fig.text(0.5, -0.05,
          "conditions overlap and are not distinguishable here.",
          ha="center", fontsize=11.5, color=GRAY)
 fig.tight_layout()
-fig.savefig(f"{FIGDIR}/fig4_wrongness_type.png", bbox_inches="tight")
+fig.savefig(f"{FIGDIR}/fig4_wrongness_type.png", **SAVE_KW)
 plt.close(fig)
 
 # ============================================================ fig 0: pipeline
@@ -294,7 +301,7 @@ ax.add_patch(FancyArrowPatch((COLS[0] + W + 0.9, mid2), (COLS[1] - 0.9, mid2), *
 ax.add_patch(FancyArrowPatch((COLS[1] + W + 0.9, mid2), (COLS[2] - 0.9, mid2), **arrow))
 
 fig.tight_layout()
-fig.savefig(f"{FIGDIR}/fig0_pipeline.png", bbox_inches="tight")
+fig.savefig(f"{FIGDIR}/fig0_pipeline.png", **SAVE_KW)
 plt.close(fig)
 
 
@@ -351,8 +358,49 @@ if _AB.get("qwen3-4b-thinking"):
              "overlaps none of the others. 95% question-level bootstrap intervals.",
              ha="center", fontsize=11, color=GRAY)
     fig.tight_layout()
-    fig.savefig(f"{FIGDIR}/fig5_paired_ablation.png", bbox_inches="tight")
+    fig.savefig(f"{FIGDIR}/fig5_paired_ablation.png", **SAVE_KW)
     plt.close(fig)
     print("wrote fig5 (paired ablation,", len(MODELS_AB), "models)")
+
+# ===================================================== social card (Open Graph)
+# Exactly 1200x630, the size link unfurlers crop to. bbox_inches="tight" would
+# resize the canvas and break that, so this one figure saves without it.
+fig = plt.figure(figsize=(6.0, 3.15), dpi=200)
+fig.patch.set_facecolor(WHITE)
+fig.text(0.055, 0.885, "The completeness cliff", fontsize=25, color=INK,
+         fontweight="bold", va="top", family="serif")
+fig.text(0.055, 0.745,
+         "Language models escape wrong reasoning until it is finished",
+         fontsize=12.5, color=GRAY, va="top", family="serif")
+
+axc = fig.add_axes([0.055, 0.145, 0.60, 0.50])
+for pair, label, color, marker in SERIES:
+    v = [cell(pair, c)["pass@16"] for c in CONDS]
+    axc.plot(FRACS, v, color=color, lw=2.2, marker=marker, ms=5, label=label)
+axc.set_xticks(FRACS, ["0", "25%", "50%", "75%", "100%"], fontsize=8, color=GRAY)
+axc.set_yticks([0, 0.5, 1.0], ["0", ".5", "1"], fontsize=8, color=GRAY)
+axc.set_ylim(-0.08, 1.15)
+axc.set_xlabel("fraction of the model's own wrong reasoning injected",
+               fontsize=8.5, color=GRAY, labelpad=2)
+axc.set_ylabel("pass@16", fontsize=8.5, color=GRAY, labelpad=2)
+axc.legend(frameon=False, fontsize=7.5, loc="lower left", handlelength=1.3)
+axc.grid(axis="x", visible=False)
+axc.tick_params(length=0)
+
+drop = cell("qwen3-4b-thinking/aime", "self_wrong:prefix1")["pass@16"]
+axc.annotate("the floor drops out", xy=(0.99, drop + 0.04), xytext=(0.30, 0.26),
+             fontsize=9, color=BLACK, fontweight="bold", family="serif",
+             ha="left", va="center",
+             arrowprops=dict(arrowstyle="-|>", color=BLACK, lw=1.1,
+                             mutation_scale=8, shrinkA=3, shrinkB=4))
+fig.text(0.70, 0.545,
+         "A model given part of its\nown faulty reasoning\nrecovers almost every time.\n"
+         "Given all of it, it almost\nnever does.",
+         fontsize=10.5, color=INK, va="top", family="serif", linespacing=1.55)
+fig.text(0.70, 0.175, "Alvin Zhang  ·  Johns Hopkins",
+         fontsize=9, color=GRAY, va="top", family="serif")
+fig.savefig(f"{FIGDIR}/social_card.png", metadata={"Software": None})
+plt.close(fig)
+print("wrote social card (1200x630)")
 
 print("wrote blog figures to", FIGDIR)
